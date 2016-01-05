@@ -1,0 +1,44 @@
+<h1>Emergency Transportation Business Intelligence</h1>
+
+<table>
+  <tr>
+    <td>
+      Value:
+    </td>
+    <td>
+      <input id="metricType-Count" type="radio" name="metricType" value="Count" checked="checked" />
+      <label for="metricType-Count">Count</label>
+    </td>
+    <td>
+      <input id="metricType-Dollars" type="radio" name="metricType" value="Dollars" />
+      <label for="metricType-Dollars">Dollars</label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Period:
+    </td>
+    <td>
+      <input id="periodType-Week" type="radio" name="periodType" value="week" checked="checked" />
+      <label for="periodType-Week">Week Ending</label>
+    </td>
+    <td>
+      <input id="periodType-Month" type="radio" name="periodType" value="month" />
+      <label for="periodType-Month">Month</label>
+    </td>
+  </tr>
+</table>
+
+
+<% ['Count', 'Dollars'].each do |metric_type| %>
+  <% ['week', 'month'].each do |period_type| %>
+    <div id="grid-container-<%= metric_type %>-<%= period_type %>" class="grid-container">
+      <%= render 'metric_reports/metric_reports',
+                  table_id_prefix: 'grid',
+                  metric_type: metric_type,
+                  period_type: period_type
+      %>
+    </div>
+  <% end %>
+<% end %>
+<%#= image_tag "progress_bar.gif", class: 'progress-bar' %>

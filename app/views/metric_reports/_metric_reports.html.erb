@@ -1,0 +1,71 @@
+<% @table_id_prefix = table_id_prefix rescue 'grid' %>
+<% @metric_type = metric_type rescue 'Count' %>
+<% @period_type = period_type rescue 'week' %>
+
+<div class="metric-report">
+  <div class="fixed">
+    <table id='<%= "#{@table_id_prefix}-#{@metric_type}-#{@period_type}" %>'>
+      <thead>
+        <tr>
+          <th>Measurement</th>
+          <th>Trend</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% MetricReport.names.select {|name| name.include?(@metric_type)}.each do |name| %>
+        <tr>
+          <td><%= name %></td>
+          <td></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="scrollable">
+    <table id='<%= "#{@table_id_prefix}-#{@metric_type}-#{@period_type}" %>'>
+      <thead>
+        <tr>
+          <% if @period_type == 'week' %>
+          <% MetricReport.week_ends.each do |week_end| %>
+          <th><%= week_end.strftime('%b %d, %Y') %></th>
+          <% end %>
+          <% else %>
+          <% MetricReport.months.each do |month| %>
+          <th><%= month.strftime('%b %Y') %></th>
+          <% end %>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% MetricReport.names.select {|name| name.include?(@metric_type)}.each do |name| %>
+        <tr>
+          <% if @period_type == 'week' %>
+          <% MetricReport.week_ends.each do |week_end| %>
+          <td>
+            <% value = MetricReport.find_by(period: week_end, period_type: 'week', name: name).value %>
+            <% if @metric_type == 'Count' %>
+            <%= number_with_precision(value, :precision => 2, :delimiter => ',') %>
+            <% else %>
+            <%= number_to_currency(value, :precision => 2, :delimiter => ',') %>
+            <% end %>
+          </td>
+          <% end %>
+          <% else %>
+          <% MetricReport.months.each do |month| %>
+          <td>
+            <% value = MetricReport.find_by(period: month, period_type: 'month', name: name).value %>
+            <% if @metric_type == 'Count' %>
+            <%= number_with_precision(value, :precision => 2, :delimiter => ',') %>
+            <% else %>
+            <%= number_to_currency(value, :precision => 2, :delimiter => ',') %>
+            <% end %>
+          </td>
+          <% end %>
+          <% end %>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

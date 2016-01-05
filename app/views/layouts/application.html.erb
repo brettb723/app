@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EmergencyTransportationBi</title>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
+  <%= csrf_meta_tags %>
+    <link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.3.1111/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.3.1111/styles/kendo.material.min.css" />
+
+    <script src="//kendo.cdn.telerik.com/2015.3.1111/js/kendo.all.min.js"></script>  
+
+	<script type='text/javascript'>
+	(function (d, t) {
+	  var bh = d.createElement(t), s = d.getElementsByTagName(t)[0];
+	  bh.type = 'text/javascript';
+	  bh.src = '//www.bugherd.com/sidebarv2.js?apikey=<%= ENV["BUG_HERD_API_KEY"] %>';
+	  s.parentNode.insertBefore(bh, s);
+	  })(document, 'script');
+	</script>    
+</head>
+<body>
+
+<%= yield %>
+
+<p>Please ensure being <a href="http://www.bugherd.com/users/sign_in">signed in</a> on <a href="http://www.bugherd.com">BugHerd</a> to report issues</p>
+
+</body>
+</html>

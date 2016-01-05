@@ -1,0 +1,217 @@
+== README
+
+
+FEATURES:
+
+* Support Counts
+* Support Dollars
+* Support multiple data files by date
+* Support multiple clients
+
+Requirement
+
+- Client
+  - Data (multiple entries by date, no entries repeat)
+    - Counts
+    - Dollars
+
+Solution
+
+First step - extract as CSV file (ideally automatically)
+
+Intermediate Steps - Somehow pass the CSV file to the cloud
+ + read data file and display on screen (in HTML) directly without going to database
+ - auto push the file to the web app directly on a certain API URL:  emergency_transpoertation_bi.herokuapp.com/post_data
+ - dump the file into a directory locally and have the app pick it up
+ - push to Amazon S3 or something similar and the app picks it up daily from there
+ - Translate data file to database data 
+ - Integrate with SQL server APIs to read data
+
+Final Step - Store on the Cloud where the database is
+ - Manual command for pushing data to the cloud
+
+Tasks:
+
+1- Import data into database while managing redundancy 
+2- Automated process for exporting data from SQL server (happens on a schedule)
+3- Automated process for importing data into the cloud database (happens on a schedule)
+4- Troubleshoot Dollars vs Counts in latest CSV file
+5- Display progress bar.
+
+===
+SQL Queries:
+
+select
+	dateadd(DAY,0, datediff(day,0, Tripdate)) measurement_date,
+	'TripsScheduled' name,
+    'Count' metric_type,
+	agency,
+	count(*) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status in ('Y','C')
+group by
+	dateadd(DAY,0, datediff(day,0, Tripdate)),
+     agency
+union all
+select
+	dateadd(DAY,0, datediff(day,0, Tripdate)) measurement_date,
+	'TripsPerformed' name,
+    'Count' metric_type,
+	agency,
+	count(*) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, Tripdate)),
+     agency
+union all
+select
+	dateadd(DAY,0, datediff(day,0, Invoicedate)) measurement_date,
+	'TripsBilled' name,
+	'Count' metric_type,
+	agency,
+	count(*) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, Invoicedate)),
+     agency
+union all
+select
+    dateadd(DAY,0, datediff(day,0, Tripdate)) measurement_date,
+    'OnTimePerformance' metric,
+    'Count' metric_type,
+    temptable.agency,
+sum (case when TakeorReturn = 'T' and otp >=0 then 1
+          when TakeorReturn = 'R' and otp >=-15 then 1 else 0 end) numerator,
+    count(*) denominator
+
+from
+    (
+    select
+        case when TakeOrReturn ='T' then  Datediff(MI,cast(ActualDropTime as datetime),cast(DropTime as datetime))
+            when TakeorReturn = 'R' then Datediff(MI,cast(ActualPickupTime as datetime),cast(pickuptime as datetime))   end otp,
+        tt.Tripdate,
+        tt.TakeorReturn,
+        tt.agency
+    from
+        TripTransactions tt
+    where
+        Verified = 'Y'
+        and Status ='Y'
+        and DropTime != 'TBS'
+        and pickuptime != 'TBS'
+        and ActualPickupTime != 'TBS'
+        and ActualDropTime != 'TBS'
+    ) temptable
+group by
+    dateadd(DAY,0, datediff(day,0, Tripdate)),
+    agency
+
+union all
+select
+	dateadd(DAY,0, datediff(day,0, PaymentDate)) measurement_date,
+	'TripsPaid' metric,
+	'Count' metric_type,
+	agency,
+	count(*) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, PaymentDate)),
+    agency
+union all
+select
+	dateadd(DAY,0, datediff(day,0, Tripdate)) measurement_date,
+	'TripsPerformed' metric,
+    'Dollars' metric_type,
+	agency,
+	sum(Invoiceamount) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, Tripdate)),
+     agency
+union all
+select
+	dateadd(DAY,0, datediff(day,0, Invoicedate)) measurement_date,
+	'TripsBilled' metric,
+	'Dollars' metric_type,
+	agency,
+	sum(Invoiceamount) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, Invoicedate)),
+     agency
+union all
+select
+	dateadd(DAY,0, datediff(day,0, PaymentDate)) measurement_date,
+	'TripsPaid' metric,
+	'Dollars' metric_type,
+	agency,
+	sum(PaymentAmount) numerator,
+	null denominator
+from
+	Triptransactions tt
+where
+	tt.Verified = 'Y'
+	and tt.status = 'Y'
+group by
+	dateadd(DAY,0, datediff(day,0, PaymentDate)),
+     agency
+
+
+
+====
+
+This README would normally document whatever steps are necessary to get the
+application up and running.
+
+Things you may want to cover:
+
+* Ruby version
+
+* System dependencies
+
+* Configuration
+
+* Database creation
+
+* Database initialization
+
+* How to run the test suite
+
+* Services (job queues, cache servers, search engines, etc.)
+
+* Deployment instructions
+
+* ...
+
+
+Please feel free to use a different markup language if you do not plan to run
+<tt>rake doc:app</tt>.

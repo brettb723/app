@@ -1,0 +1,53 @@
+// Place all the styles related to the MetricReports controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.metric-report {
+  position: relative;
+}
+
+.fixed {
+  width: 400px;
+
+  .k-grid-content tr td:nth-of-type(1), .k-grid-header th.k-header[data-field="Measurement"] {
+  	width: 180px;
+  }
+
+  .k-grid-content tr td:nth-of-type(2), .k-grid-header th.k-header[data-field="Trend"] {
+  	width: 120px;
+  }
+}
+
+.scrollable {
+  width: calc(100% - 400px);
+  position: absolute;
+  top: 0;
+  left: 400px;
+
+  .k-grid-content tr td, .k-grid-header th.k-header {
+      width: 100px;
+      min-width: 100px;
+      text-align: right;
+  }
+
+  .k-grid-header th.k-header {
+      padding-left: 16px;
+      padding-right: 17px;
+  }
+
+  .k-grid-content tr td {
+      padding-left: 17px;
+      padding-right: 17px;
+  }
+
+}
+
+.k-grid-content.k-auto-scrollable, .k-grid.k-widget {
+  min-height: 500px;
+}
+
+.fixed .k-grid-content {
+  overflow-x: hidden;
+  overflow-y: auto;
+}

@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  measurement_date: 2015-12-22
+  name: MyString
+  metric_type: MyString
+  agency: MyString
+  numerator: 1.5
+  denominator: 1.5
+
+two:
+  measurement_date: 2015-12-22
+  name: MyString
+  metric_type: MyString
+  agency: MyString
+  numerator: 1.5
+  denominator: 1.5

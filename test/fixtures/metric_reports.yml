@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  period: 2015-12-22
+  period_type: MyString
+  value: 1.5
+
+two:
+  name: MyString
+  period: 2015-12-22
+  period_type: MyString
+  value: 1.5

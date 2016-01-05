@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @metric_report.name %>
+</p>
+
+<p>
+  <strong>Period:</strong>
+  <%= @metric_report.period %>
+</p>
+
+<p>
+  <strong>Period type:</strong>
+  <%= @metric_report.period_type %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @metric_report.value %>
+</p>
+
+<%= link_to 'Edit', edit_metric_report_path(@metric_report) %> |
+<%= link_to 'Back', metric_reports_path %>
